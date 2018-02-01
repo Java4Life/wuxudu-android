@@ -6,11 +6,13 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity {
+import com.wuxudu.android.dummy.DummyContent;
+
+public class MainActivity extends AppCompatActivity implements PlanFragment.OnListFragmentInteractionListener {
 
     private ViewPager viewPager;
+    private BottomNavigationView navigation;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -18,14 +20,14 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.navigation_home:
-
+                case R.id.navigation_plan:
+                    viewPager.setCurrentItem(0,false);
                     return true;
-                case R.id.navigation_dashboard:
-
+                case R.id.navigation_explore:
+                    viewPager.setCurrentItem(1,false);
                     return true;
-                case R.id.navigation_notifications:
-
+                case R.id.navigation_me:
+                    viewPager.setCurrentItem(2,false);
                     return true;
             }
             return false;
@@ -37,8 +39,28 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         this.viewPager = findViewById(R.id.viewpager);
-        BottomNavigationView navigation = findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        this.navigation = findViewById(R.id.navigation);
+        this.navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        this.initViewPager();
     }
 
+    private void initViewPager() {
+        MainViewPagerAdapter adapter = new MainViewPagerAdapter(getSupportFragmentManager());
+        adapter.addFragment(PlanFragment.newInstance(1));
+        adapter.addFragment(PlanFragment.newInstance(2));
+        adapter.addFragment(PlanFragment.newInstance(3));
+        this.viewPager.setAdapter(adapter);
+        this.viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener(){
+            @Override
+            public void onPageSelected(int position) {
+                navigation.getMenu().getItem(position).setChecked(true);
+            }
+        });
+    }
+
+    @Override
+    public void onListFragmentInteraction(DummyContent.DummyItem item) {
+
+    }
 }
+
